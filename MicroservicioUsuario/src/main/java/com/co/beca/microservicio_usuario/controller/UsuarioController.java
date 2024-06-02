@@ -20,12 +20,12 @@ public class UsuarioController {
 	@Autowired
 	UsuarioService service;
 	
-	@GetMapping
-	public ResponseEntity<?> listarAlumno(){
+	@GetMapping("/obtenerUsuarios")
+	public ResponseEntity<?> listarUsuarios(){
 		return ResponseEntity.ok().body(service.findAll());
 	}
 	
-	@GetMapping("/")
+	@GetMapping("/obtenerUsuario/{id}")
 	public ResponseEntity<?> ver(@PathVariable Long id){
 		Optional<Usuario> ob = service.findById(id);
 		
@@ -35,13 +35,13 @@ public class UsuarioController {
 		return ResponseEntity.ok().body(ob.get());
 	}
 	
-	@PostMapping
+	@PostMapping("/agregarUsuario")
 	public ResponseEntity<?> crear(@RequestBody Usuario usuario, Long id){
 		Usuario usuarioBd= service.save(usuario);
 		return ResponseEntity.status(HttpStatus.CREATED).body(service.save(usuarioBd));
 	}
 	
-	@PutMapping("/{id}")
+	@PutMapping("/actualizarUsuario/{id}")
 	public ResponseEntity<?> editar(@RequestBody Usuario usuario, @PathVariable Long id){
 		Optional<Usuario> ob = service.findById(id);
 		
@@ -57,7 +57,7 @@ public class UsuarioController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(service.save(usuarioBd));
 	}
 	
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/eliminar/{id}")
 	private ResponseEntity<?> eliminar(@PathVariable Long id){
 		
 		service.deleteById(id);

@@ -14,7 +14,6 @@ public class Reserva {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long IdReserva;
-	private Long IdPago;
 	private Long IdUsuario;
 	private String fechaReserva;
     private String fechaServicio;
