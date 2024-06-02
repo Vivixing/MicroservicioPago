@@ -1,6 +1,9 @@
 package com.co.echeverri.microservicio_pago.controller;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.co.echeverri.microservicio_pago.entity.Pago;
+import com.co.echeverri.microservicio_pago.entity.Reserva;
 import com.co.echeverri.microservicio_pago.service.PagoService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
 
 @RestController
 public class PagoController {
@@ -26,7 +32,13 @@ public class PagoController {
 		return ResponseEntity.ok().body(service.findAll());
 	}
 	
-	@GetMapping("/")
+	@GetMapping("/reservas")
+	public CompletableFuture<List<Object>> getReservas() throws Exception {
+		
+	    return service.getReservas();
+	}
+	
+	@GetMapping("/obtenerPago/{id}")
 	public ResponseEntity<?> ver(@PathVariable Long id){
 		Optional<Pago> ob = service.findById(id);
 		
@@ -36,13 +48,32 @@ public class PagoController {
 		return ResponseEntity.ok().body(ob.get());
 	}
 	
-	@PostMapping
-	public ResponseEntity<?> crear(@RequestBody Pago pago, Long id){
-		Pago pagoDb = service.save(pago);
-		return ResponseEntity.status(HttpStatus.CREATED).body(service.save(pagoDb));
+	@PostMapping("crearPago")
+	public ResponseEntity<?> crear(@RequestBody Pago pago, Long id)throws Exception {
+		CompletableFuture<List<Object>> reservasJsonFuture = service.getReservas();
+		List<Object> reservasJson = reservasJsonFuture.join();
+	
+		
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonArray = mapper.writeValueAsString(reservasJson);
+	
+		
+		CollectionType listType = mapper.getTypeFactory().constructCollectionType(List.class, Reserva.class);
+		List<Reserva> reservas = mapper.readValue(jsonArray, listType);
+	
+		
+		boolean idPresente = reservas.stream()
+				.map(Reserva::getIdReserva)
+				.anyMatch(IdReserva -> IdReserva.equals(pago.getIdReserva()));
+	
+		if (!idPresente) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El id de la reserva no está presente en la lista de Reservas");
+		}
+	
+		return ResponseEntity.status(HttpStatus.CREATED).body(service.save(pago));
 	}
 	
-	@PutMapping("/{id}")
+	@PutMapping("editarReserva/{id}")
 	public ResponseEntity<?> editar(@RequestBody Pago pago, @PathVariable Long id){
 		Optional<Pago> ob = service.findById(id);
 		
@@ -55,7 +86,7 @@ public class PagoController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(service.save(pagoBd));
 	}
 	
-	@DeleteMapping("/{id}")
+	@DeleteMapping("eliminarReserva/{id}")
 	private ResponseEntity<?> eliminar(@PathVariable Long id){
 		
 		service.deleteById(id);

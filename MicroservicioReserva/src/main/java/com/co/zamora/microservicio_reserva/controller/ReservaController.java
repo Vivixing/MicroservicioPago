@@ -49,15 +49,15 @@ public class ReservaController {
 		CompletableFuture<List<Object>> usuariosJsonFuture = reservaService.getUsuarios();
 		List<Object> usuariosJson = usuariosJsonFuture.join();
 	
-		// Convierte usuariosJson a una cadena JSON
+		
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonArray = mapper.writeValueAsString(usuariosJson);
 	
-		// Deserializa la cadena JSON a una lista de Usuario
+		
 		CollectionType listType = mapper.getTypeFactory().constructCollectionType(List.class, Usuario.class);
 		List<Usuario> usuarios = mapper.readValue(jsonArray, listType);
 	
-		// Verifica si el idUsuario de la reserva está presente en la lista de usuarios
+		
 		boolean idPresente = usuarios.stream()
 				.map(Usuario::getIdUsuario)
 				.anyMatch(usuarioId -> usuarioId.equals(reserva.getIdUsuario()));

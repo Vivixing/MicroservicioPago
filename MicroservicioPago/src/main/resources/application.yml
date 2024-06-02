@@ -1,8 +1,56 @@
-spring.application.name=MicroservicioPago
-server.port=8082
-spring.datasource.url=jdbc:postgresql://localhost:5432/TercerParcial
-spring.datasource.username=postgres
-spring.datasource.password=postgres
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
+server:
+  port: 8082
+spring:
+  application:
+    name: MicroservicioPago
+  datasource:
+    password: postgres
+    url: jdbc:postgresql://localhost:5432/TercerParcial
+    username: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
+    
+resilience4j:
+  circuitbreaker:
+    configs:
+      shared:
+        registerHealthIndicator: true
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 5
+        failure-rate-threshold: 40
+        slow-call-rate-threshold: 40
+        permitted-number-of-calls-in-half-open-state: 2
+        max-wait-duration-in-half-open-state: 10s
+        wait-duration-in-open-state: 10s
+        slow-call-duration-threshold: 2s
+        writable-stack-trace-enabled: true
+        automatic-transition-from-open-to-half-open-enabled: true
+
+    instances:
+      obtenerUsuarios:
+        baseConfig: shared
+
+  timelimiter:
+    configs:
+      values:
+        timeout-duration: 22s
+    instances:
+      offersTimeLimiter:
+        base-config: values
