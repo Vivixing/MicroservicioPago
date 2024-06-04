@@ -47,7 +47,10 @@ public class ReservaController {
 	public ResponseEntity<?> crearReserva(@RequestBody Reserva reserva) throws Exception {
 		CompletableFuture<List<Object>> usuariosJsonFuture = reservaService.getUsuarios();
 		List<Object> usuariosJson = usuariosJsonFuture.join();
-	
+		
+		if(usuariosJson.contains("El microservicio de usuarios no está disponible!")) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El microservicio de usuarios no está disponible!");
+		}
 		
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonArray = mapper.writeValueAsString(usuariosJson);
@@ -77,13 +80,11 @@ public class ReservaController {
 			return ResponseEntity.noContent().build();
 		}
 		Reserva reservaBd = ob.get();
-		reservaBd.setFechaReserva(reserva.getFechaReserva());
 		reservaBd.setFechaServicio(reserva.getFechaServicio());
 		reservaBd.setHoraServicio(reserva.getHoraServicio());
 		reservaBd.setDuracion(reserva.getDuracion());
 		reservaBd.setNumeroPersonas(reserva.getNumeroPersonas());
 		reservaBd.setTipoServicio(reserva.getTipoServicio());
-		reservaBd.setNumeroReserva(reserva.getNumeroReserva());
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(reservaService.save(reservaBd));
 	}

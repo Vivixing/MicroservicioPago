@@ -15,13 +15,11 @@ public class Reserva {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long IdReserva;
 	private Long IdUsuario;
-	private String fechaReserva;
     private String fechaServicio;
     private String horaServicio;
     private int duracion;
     private int numeroPersonas;
     private String tipoServicio;
-    private String numeroReserva;
     
     @Column(name = "create_at")
     @Temporal(TemporalType.TIMESTAMP)

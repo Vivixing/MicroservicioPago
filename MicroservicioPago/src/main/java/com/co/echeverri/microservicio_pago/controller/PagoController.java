@@ -53,7 +53,10 @@ public class PagoController {
 		CompletableFuture<List<Object>> reservasJsonFuture = service.getReservas();
 		List<Object> reservasJson = reservasJsonFuture.join();
 	
-		
+		if(reservasJson.contains("El microservicio de reserva no está disponible!")) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El microservicio de reserva no está disponible");
+		}
+
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonArray = mapper.writeValueAsString(reservasJson);
 	
@@ -64,7 +67,7 @@ public class PagoController {
 		
 		boolean idPresente = reservas.stream()
 				.map(Reserva::getIdReserva)
-				.anyMatch(IdReserva -> IdReserva.equals(pago.getIdReserva()));
+				.anyMatch(idReserva -> idReserva.equals(pago.getIdReserva()));
 	
 		if (!idPresente) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El id de la reserva no está presente en la lista de Reservas");
