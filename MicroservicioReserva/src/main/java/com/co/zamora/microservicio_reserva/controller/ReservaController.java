@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.co.zamora.microservicio_reserva.entity.Reserva;
 import com.co.zamora.microservicio_reserva.entity.Usuario;
 import com.co.zamora.microservicio_reserva.service.ReservaService;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 
