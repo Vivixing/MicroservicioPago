@@ -44,7 +44,7 @@ resilience4j:
         automatic-transition-from-open-to-half-open-enabled: true
 
     instances:
-      obtenerUsuarios:
+      reservasCircuitBreaker:
         baseConfig: shared
 
   timelimiter:

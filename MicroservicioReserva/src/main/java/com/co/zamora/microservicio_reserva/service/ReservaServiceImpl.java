@@ -18,8 +18,8 @@ import com.co.zamora.microservicio_reserva.controller.ReservaController;
 import com.co.zamora.microservicio_reserva.entity.Reserva;
 import com.co.zamora.microservicio_reserva.repository.ReservaRepository;
 
-import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker.State;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 
@@ -30,7 +30,8 @@ public class ReservaServiceImpl implements ReservaService{
 	ReservaRepository dao;
 
 	@Autowired
-    CircuitBreakerRegistry circuitBreakerRegistry;
+	CircuitBreakerRegistry circuitBreakerRegistry;
+	
 	 private static final Logger logger = LoggerFactory.getLogger(ReservaController.class);
 	 RestTemplate restTemplate = new RestTemplate();
 		

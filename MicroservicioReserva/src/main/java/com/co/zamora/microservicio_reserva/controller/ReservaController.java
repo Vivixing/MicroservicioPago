@@ -27,7 +27,7 @@ public class ReservaController {
 	@Autowired
 	ReservaService reservaService;
 
-	@GetMapping
+	@GetMapping("obtenerReservas")
 	public ResponseEntity<?> listarReserva(){
 		return ResponseEntity.ok().body(reservaService.findAll());
 	}

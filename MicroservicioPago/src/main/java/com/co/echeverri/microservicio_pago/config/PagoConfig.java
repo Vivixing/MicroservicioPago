@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.github.resilience4j.core.registry.EntryAddedEvent;
 import io.github.resilience4j.core.registry.EntryRemovedEvent;
 import io.github.resilience4j.core.registry.EntryReplacedEvent;
@@ -13,6 +14,16 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration
 @Slf4j
 public class PagoConfig {
+	@Bean
+    public CircuitBreakerRegistry circuitBreakerRegistry(RegistryEventConsumer<CircuitBreaker> eventConsumer) {
+        return CircuitBreakerRegistry.ofDefaults();
+    }
+
+    @Bean
+    public CircuitBreaker circuitBreaker(CircuitBreakerRegistry circuitBreakerRegistry) {
+        return circuitBreakerRegistry.circuitBreaker("reservasCircuitBreaker");
+    }
+    
 	@Bean
 	  public RegistryEventConsumer<CircuitBreaker> circuitBreakerEventConsumer() {
 	    return new RegistryEventConsumer<CircuitBreaker>() {

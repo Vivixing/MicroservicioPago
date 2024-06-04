@@ -9,6 +9,7 @@ import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
@@ -22,6 +23,7 @@ import io.github.resilience4j.circuitbreaker.CircuitBreaker.State;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 
+@Service
 public class PagoServiceImpl implements PagoService {
 
 	@Autowired
@@ -65,13 +67,13 @@ public class PagoServiceImpl implements PagoService {
 	        Object[] reservas = null;
 	        State estado = circuitBreakerRegistry.circuitBreaker("reservasCircuitBreaker").getState();
 			logger.info("Circuit Breaker State : {} -> {}", estado);
-			circuitBreakerRegistry.circuitBreaker("usuariosCircuitBreaker").getEventPublisher().onEvent(event -> {
+			circuitBreakerRegistry.circuitBreaker("reservasCircuitBreaker").getEventPublisher().onEvent(event -> {
 				   logger.info("State change {}", event);
 			});
 	        try {
-	            reservas = restTemplate.getForObject("http://localhost:8082/obtenerReservas", Object[].class);
+	            reservas = restTemplate.getForObject("http://localhost:8083/obtenerReservas", Object[].class);
 	        } catch (Exception e) {
-	            throw new RuntimeException("Failed to fetch users", e);
+	            throw new RuntimeException("Failed to fetch reservas", e);
 	        }
 	        return Arrays.asList(reservas);
 	    });
